@@ -63,10 +63,10 @@ The custom repeater works as follows:
 1. A placement file is read from disk.
 2. The file provides:
    - the number of placements,
-   - the center coordinates of each hole,
+   - the reference center coordinates of each hole,
    - the target point associated with each hole.
-3. Each copy is translated to its prescribed center position.
-4. Each copy is rotated so that its local forward axis points from the hole center toward the specified target point.
+3. Each copy is placed at this projected position.
+4. Each copy is rotated using the same target point so that the local forward axis follows the focused direction defined by the file.
 
 This format supports several collimator types in the same simulation framework:
 
@@ -120,12 +120,12 @@ centerX3 centerY3 centerZ3 targetX3 targetY3 targetZ3
 
 - Line 2 onward: one line per hole
   - `centerX centerY centerZ targetX targetY targetZ`
-  - the first three values are the hole center coordinates
-  - the last three values are the target point coordinates used to define the hole orientation
+  - the first three values are the reference hole center coordinates
+  - the last three values are the target point coordinates used to define the focused direction
 
 Example:
 
-unit: mm
+Unit: mm
 ```text
 4
 20.0 -260.0 -205.0 -470.0 0.0 0.0
@@ -146,6 +146,14 @@ In the current implementation:
 - the code reads the hole count from the file,
 - it places all holes listed in the file.
 
+The legacy commands `setRepeatNumberX`, `setRepeatNumberY`, and `setRepeatNumberZ` are still available in the class interface, but the current placement logic is driven by the file contents.
+
+### Positioning rule
+
+The values `centerX centerY centerZ` are treated as reference coordinates, not necessarily as the final placement coordinates.
+
+For each entry, the code computes the intersection of the line from `center` to `target` with the plane `x = 0`, and the copy is placed at that projected position. This preserves the current implementation used in this repository.
+
 ### Path handling
 
 `setPlacementsFilename` accepts either:
@@ -157,7 +165,7 @@ Absolute paths are strongly recommended for reproducibility.
 
 ### Orientation convention
 
-Each copy is rotated so that it points from its center toward the target point given on the same line of the input file. The current implementation aligns the local forward direction with the global `+x` reference used in the custom rotation routine.
+Each copy is rotated using the target point given on the same line of the input file. In the current implementation, the rotation routine uses the projected placement position together with the target point and aligns the local forward direction with the global `+x` reference used in the custom rotation routine.
 
 ## Recommended Minimal Workflow
 
@@ -178,13 +186,16 @@ Example:
 
 This extension is intended for geometries where repeated detector or collimator elements must:
 
-- be placed at arbitrary coordinates,
+- be defined by hole-wise reference coordinates,
 - point to a shared or hole-specific target,
+- be projected onto the `x = 0` plane before placement,
 - represent cone-beam, fan-beam, converging-hole, or other focused collimator arrangements.
 
 ## Current Limitations
 
 - This implementation is a custom extension and is not part of the official GATE release.
+- The current code assumes the focused placement is obtained by projection onto the plane `x = 0`.
+- The rotation routine follows the existing custom implementation and therefore depends on the local axis convention of the repeated object.
 
 ## Summary of User-Facing Commands
 
