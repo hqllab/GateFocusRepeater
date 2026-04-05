@@ -12,9 +12,6 @@ See LICENSE.md for further details
 #include "globals.hh"
 #include "GateObjectRepeaterMessenger.hh"
 
-class G4UIcmdWithAnInteger;
-class G4UIcmdWith3VectorAndUnit;
-class G4UIcmdWithABool;
 class G4UIcmdWithAString;
 
 class GateFocusArrayRepeater;
@@ -32,11 +29,6 @@ class GateFocusArrayRepeaterMessenger : public GateObjectRepeaterMessenger
       { return (GateFocusArrayRepeater*)GetObjectRepeater(); }
 
   private:
-    G4UIcmdWithAnInteger* SetRepeatNumberXCmd;
-    G4UIcmdWithAnInteger* SetRepeatNumberYCmd;
-    G4UIcmdWithAnInteger* SetRepeatNumberZCmd;
-    G4UIcmdWith3VectorAndUnit* SetRepeatVectorCmd;
-    G4UIcmdWithABool* AutoCenterCmd;
     G4UIcmdWithAString* SetPlacementsFilenameCmd;
 };
 

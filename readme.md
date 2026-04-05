@@ -36,7 +36,7 @@ References collaboration papers:
 
 This repository contains a custom extension to GATE 9.4.1 for modeling a focused repeating geometry, developed for converging-hole collimator simulations and optimization.
 
-The main addition is a new object repeater called `focusArray`. Unlike the standard `cubicArray` repeater, which generates copies on a regular Cartesian grid, `focusArray` reads user-defined copy positions from a text file and rotates each copy so that it points toward a common focus.
+The main addition is a new object repeater called `focusArray`. Unlike the standard `cubicArray` repeater, which generates copies on a regular Cartesian grid, `focusArray` reads user-defined copy positions and target points from a text file and rotates each copy so that it points toward its own specified target.
 
 This implementation was used to simulate and optimize a converging-hole collimator scheme.
 
@@ -62,11 +62,17 @@ The custom repeater works as follows:
 
 1. A placement file is read from disk.
 2. The file provides:
-   - the focus position in the `x-y` plane,
    - the number of placements,
-   - the list of copy coordinates.
-3. Each copy is translated to its prescribed position.
-4. Each copy is rotated so that its local forward axis points toward the focus.
+   - the center coordinates of each hole,
+   - the target point associated with each hole.
+3. Each copy is translated to its prescribed center position.
+4. Each copy is rotated so that its local forward axis points from the hole center toward the specified target point.
+
+This format supports several collimator types in the same simulation framework:
+
+- If all holes point to the same target point, the geometry behaves as a cone-beam collimator.
+- If the holes point to different target points distributed along a line, the geometry behaves as a fan-beam collimator.
+- More general focused geometries can also be represented by assigning arbitrary target points hole by hole.
 
 ## Build Instructions
 
@@ -100,52 +106,43 @@ If you prefer a custom repeater name:
 The placement file must have the following structure:
 
 ```text
-focusX focusY
 N
-x1 y1 z1
-x2 y2 z2
-x3 y3 z3
+centerX1 centerY1 centerZ1 targetX1 targetY1 targetZ1
+centerX2 centerY2 centerZ2 targetX2 targetY2 targetZ2
+centerX3 centerY3 centerZ3 targetX3 targetY3 targetZ3
 ...
 ```
 
 ### Meaning of each line
 
-- Line 1: focus position in the `x-y` plane
-  - `focusX focusY`
-  - the current implementation assumes `focusZ = 0`
-
-- Line 2: number of placements
+- Line 1: number of placements
   - `N`
 
-- Line 3 onward: one copy position per line
-  - `x y z`
+- Line 2 onward: one line per hole
+  - `centerX centerY centerZ targetX targetY targetZ`
+  - the first three values are the hole center coordinates
+  - the last three values are the target point coordinates used to define the hole orientation
 
 Example:
 
 ```text
--470 0
 4
-0 10 10
-0 -10 10
-0 10 -10
-0 -10 -10
+20.0 -260.0 -205.0 -470.0 0.0 0.0
+20.0 -259.0 -203.26794919243113 -470.0 0.0 0.0
+20.0 -260.0 -201.53589838486224 -470.0 0.0 0.0
+20.0 -259.0 -199.80384757729337 -470.0 0.0 0.0
 ```
 
 ## Important Behavior
 
 ### Actual number of copies
 
-The actual number of copies is determined by the placement file, not by:
-
-- `setRepeatNumberX`
-- `setRepeatNumberY`
-- `setRepeatNumberZ`
+The actual number of copies is determined entirely by the placement file.
 
 In the current implementation:
 
-- the code reads the point count from the file,
-- it places all points listed in the file,
-- if `Nx * Ny * Nz` differs from the file count, only a warning is printed.
+- the code reads the hole count from the file,
+- it places all holes listed in the file.
 
 ### Path handling
 
@@ -158,7 +155,7 @@ Absolute paths are strongly recommended for reproducibility.
 
 ### Orientation convention
 
-Each copy is rotated so that it points toward the common focus. The current implementation aligns the local forward direction with the global `+x` reference used in the custom rotation routine.
+Each copy is rotated so that it points from its center toward the target point given on the same line of the input file. The current implementation aligns the local forward direction with the global `+x` reference used in the custom rotation routine.
 
 ## Recommended Minimal Workflow
 
@@ -180,14 +177,11 @@ Example:
 This extension is intended for geometries where repeated detector or collimator elements must:
 
 - be placed at arbitrary coordinates,
-- share a common geometric focus,
-- represent converging-hole or other focused collimator arrangements.
+- point to a shared or hole-specific target,
+- represent cone-beam, fan-beam, converging-hole, or other focused collimator arrangements.
 
 ## Current Limitations
 
-- The focus is read as `focusX focusY`, with `focusZ` fixed to `0`.
-- The implementation uses an internal projection toward `xSlice = 0`.
-- `setRepeatVector` and `autoCenter` are kept for interface compatibility, but the actual positions are driven by the placement file.
 - This implementation is a custom extension and is not part of the official GATE release.
 
 ## Summary of User-Facing Commands
@@ -210,4 +204,3 @@ If a custom repeater name is used:
 ## Citation / Reuse
 
 If you use this custom extension in publications, please describe it as a user-added GATE repeater for focused array placement and cite the corresponding methodological paper or repository associated with your study.
-

@@ -24,6 +24,12 @@
 
 namespace
 {
+struct FocusPlacement
+{
+  G4ThreeVector center;
+  G4ThreeVector target;
+};
+
 G4RotationMatrix BuildFocusRotation(const G4RotationMatrix& currentRotationMatrix,
                                     const G4ThreeVector& newPosition,
                                     const G4ThreeVector& targetPoint)
@@ -68,22 +74,11 @@ G4RotationMatrix BuildFocusRotation(const G4RotationMatrix& currentRotationMatri
 }
 
 GateFocusArrayRepeater::GateFocusArrayRepeater(GateVVolume* itsObjectInserter,
-                                               const G4String& itsName,
-                                               G4int itsRepeatNumberX,
-                                               G4int itsRepeatNumberY,
-                                               G4int itsRepeatNumberZ,
-                                               const G4ThreeVector& itsRepeatVector,
-                                               G4bool itsFlagAutoCenter)
+                                               const G4String& itsName)
   : GateVGlobalPlacement(itsObjectInserter, itsName),
-    m_repeatVector(itsRepeatVector),
-    m_flagAutoCenter(itsFlagAutoCenter),
     m_placementsFilename("ArrayRepeater_placements.txt"),
     m_Messenger(0)
 {
-  m_repeatNumber[0] = itsRepeatNumberX;
-  m_repeatNumber[1] = itsRepeatNumberY;
-  m_repeatNumber[2] = itsRepeatNumberZ;
-
   m_Messenger = new GateFocusArrayRepeaterMessenger(this);
 }
 
@@ -96,11 +91,6 @@ void GateFocusArrayRepeater::PushMyPlacements(const G4RotationMatrix& currentRot
                                               const G4ThreeVector&,
                                               G4double)
 {
-  const G4int nx = m_repeatNumber[0];
-  const G4int ny = m_repeatNumber[1];
-  const G4int nz = m_repeatNumber[2];
-  const G4int configuredCount = nx * ny * nz;
-
   const G4String& filename = m_placementsFilename;
   std::ifstream inputFile(filename.c_str());
   if (!inputFile.is_open()) {
@@ -109,16 +99,6 @@ void GateFocusArrayRepeater::PushMyPlacements(const G4RotationMatrix& currentRot
   }
 
   std::string line;
-  G4double focus = -470.;
-  G4double focusY = 0.;
-  if (std::getline(inputFile, line)) {
-    std::istringstream lineStream(line);
-    if (!(lineStream >> focus >> focusY)) {
-      G4cerr << "Error: Invalid format for focus in file." << G4endl;
-      return;
-    }
-  }
-
   G4int pointCount = 0;
   if (std::getline(inputFile, line)) {
     std::istringstream lineStream(line);
@@ -133,14 +113,9 @@ void GateFocusArrayRepeater::PushMyPlacements(const G4RotationMatrix& currentRot
     G4cerr << "Error: Invalid point count in " << filename << G4endl;
     return;
   }
-  if (configuredCount != pointCount) {
-    G4cout << "Warning: focusArray configured copy count (" << configuredCount
-           << ") differs from placement file count (" << pointCount
-           << "). Using the placement file count." << G4endl;
-  }
 
-  std::vector<G4ThreeVector> points;
-  points.reserve(pointCount);
+  std::vector<FocusPlacement> placements;
+  placements.reserve(pointCount);
   for (G4int p = 0; p < pointCount; p++) {
     if (!std::getline(inputFile, line)) {
       G4cerr << "Error: Missing point " << p << " in file." << G4endl;
@@ -148,39 +123,30 @@ void GateFocusArrayRepeater::PushMyPlacements(const G4RotationMatrix& currentRot
     }
 
     std::istringstream lineStream(line);
-    G4double x, y, z;
-    if (!(lineStream >> x >> y >> z)) {
-      G4cerr << "Error: Invalid format for point " << p << " in file." << G4endl;
+    G4double centerX, centerY, centerZ;
+    G4double targetX, targetY, targetZ;
+    if (!(lineStream >> centerX >> centerY >> centerZ >> targetX >> targetY >> targetZ)) {
+      G4cerr << "Error: Invalid format for point " << p
+             << " in file. Expected: centerX centerY centerZ targetX targetY targetZ"
+             << G4endl;
       return;
     }
-    points.push_back(G4ThreeVector(x, y, z));
+    FocusPlacement placement;
+    placement.center = G4ThreeVector(centerX, centerY, centerZ);
+    placement.target = G4ThreeVector(targetX, targetY, targetZ);
+    placements.push_back(placement);
   }
 
-  const G4ThreeVector targetPoint(focus, focusY, 0.);
-  const G4double xSlice = 0.;
-
-  for (std::vector<G4ThreeVector>::const_iterator point = points.begin(); point != points.end(); ++point) {
-    G4ThreeVector newPosition = *point;
-    const G4double x = newPosition.x();
-
-    if (std::abs(focus - x) > 1e-12) {
-      const G4double ratio = (xSlice - x) / (focus - x);
-      newPosition = newPosition + ratio * (targetPoint - newPosition);
-    }
-
-    G4RotationMatrix rotation = BuildFocusRotation(currentRotationMatrix, newPosition, targetPoint);
-    PushBackPlacement(rotation, newPosition);
+  for (std::vector<FocusPlacement>::const_iterator placement = placements.begin();
+       placement != placements.end(); ++placement) {
+    G4RotationMatrix rotation =
+      BuildFocusRotation(currentRotationMatrix, placement->center, placement->target);
+    PushBackPlacement(rotation, placement->center);
   }
 }
 
 void GateFocusArrayRepeater::DescribeMyself(size_t indent)
 {
   G4cout << GateTools::Indent(indent) << "Repetition type:         " << "focusArray" << "\n";
-  G4cout << GateTools::Indent(indent) << "Nb of copies along X   : " << m_repeatNumber[0] << "\n";
-  G4cout << GateTools::Indent(indent) << "Nb of copies along Y   : " << m_repeatNumber[1] << "\n";
-  G4cout << GateTools::Indent(indent) << "Nb of copies along Z   : " << m_repeatNumber[2] << "\n";
-  G4cout << GateTools::Indent(indent) << "Repetition step along X: " << G4BestUnit(m_repeatVector[0], "Length") << "\n";
-  G4cout << GateTools::Indent(indent) << "Repetition step along Y: " << G4BestUnit(m_repeatVector[1], "Length") << "\n";
-  G4cout << GateTools::Indent(indent) << "Repetition step along Z: " << G4BestUnit(m_repeatVector[2], "Length") << "\n";
-  G4cout << GateTools::Indent(indent) << "Centering:               " << (GetAutoCenterFlag() ? "Yes" : "No") << "\n";
+  G4cout << GateTools::Indent(indent) << "Placements file:         " << m_placementsFilename << "\n";
 }
