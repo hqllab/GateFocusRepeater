@@ -125,6 +125,7 @@ centerX3 centerY3 centerZ3 targetX3 targetY3 targetZ3
 
 Example:
 
+unit: mm
 ```text
 4
 20.0 -260.0 -205.0 -470.0 0.0 0.0
@@ -132,6 +133,7 @@ Example:
 20.0 -260.0 -201.53589838486224 -470.0 0.0 0.0
 20.0 -259.0 -199.80384757729337 -470.0 0.0 0.0
 ```
+
 
 ## Important Behavior
 
@@ -203,4 +205,4 @@ If a custom repeater name is used:
 
 ## Citation / Reuse
 
-If you use this custom extension in publications, please describe it as a user-added GATE repeater for focused array placement and cite the corresponding methodological paper or repository associated with your study.
+If you use this custom extension in publications, please describe it as a user-added GATE repeater for focused array placement.
