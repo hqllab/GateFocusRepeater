@@ -1,0 +1,69 @@
+#  *ooooOOOO0000OOOOoooo*  #
+#                          #
+#       GATE v9.4          #
+#                          #
+#        04/2024           #
+#                          #
+#  *ooooOOOO0000OOOOoooo*  #
+
+
+This version is intended to be used with Geant4 11.2.1 only. 
+Gate cannot be compiled with earlier Geant4 versions. 
+It *may* works with other ROOT, ITK, libtorch version but it is not tested.
+
+Dependencies:
+- Geant4: v11.2.1 (cxx17 is required)
+- ROOT: v6-24-06 (must be compiled with -DCMAKE_CXX_STANDARD=17)
+- ITK: v5.2.0 (with RTK enabled)
+- libtorch: v1.10.1
+
+
+-----------------
+Main new features
+-----------------
+
+- Possible changes in results (bug corrections):
+1) Since Geant4 version 11.0, a time threshold for the radioactive decay of ions has been introduced:
+https://geant4-userdoc.web.cern.ch/UsersGuides/ForApplicationDeveloper/html/TrackingAndPhysics/physicsProcess.html?highlight=thresholdforverylongdecaytime#note-on-the-time-threshold-for-radioactive-decay-of-ions
+in GateVProcess.cc l.35
+
+
+- Bug corrections:
+1) Add MixMaxRng as an option to the list of random engines PR #665
+2) Digitizer merger simplification PR #658
+3) Compton Camer digitzer modules are adapted to GND PR #657
+4) Digitizer modules adapted: Crosstalk, Buffer, IntrinsicResolution
+5) Fixed forced detection fixes PR #646
+6) Fixing Memory leaks in GND
+7) Add a "invert" command for filters of actors PR #614
+8) DNA physics lists and DNA Activator from G4 PR #610
+9) Coincidence Digitizer: main module  PR #605
+
+From 9.3 version: 
+1) Some of functionalities are temporarily disabled:
+          - Coincidence digitizers
+          - Outputs: Sino, LMF, Ecat7
+
+New features:
+1) vpgTLE-tt: new TLE of prompt gamma with time tagging
+2) BioDose Actor
+
+- additional Benchmarks
+https://github.com/OpenGATE/GateBenchmarks
+
+----------
+Gate Tools
+----------
+
+- add Digitizer macro convertion tool
+gt_digi_mac_converter in https://github.com/OpenGATE/GateTools/
+
+-------------
+Documentation
+-------------
+
+GATE home page:	    http://www.opengatecollaboration.org
+GATE documentation: https://opengate.readthedocs.io
+GATE examples:      https://github.com/OpenGATE/GateContrib
+GATE benchmarks:    https://github.com/OpenGATE/GateBenchmarks
+GATE tools:         https://github.com/OpenGATE/GateTools
