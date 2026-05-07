@@ -40,6 +40,8 @@ The main addition is a new object repeater called `focusArray`. Unlike the stand
 
 This implementation was used to simulate and optimize a converging-hole collimator scheme.
 
+This feature has been tested successfully on GATE 9.3 and GATE 9.4, and it is expected to work on other versions as well.
+
 ## What Was Added
 
 The following new files were added:
@@ -165,9 +167,9 @@ The legacy commands `setRepeatNumberX`, `setRepeatNumberY`, and `setRepeatNumber
 
 ### Positioning rule
 
-The values `centerX centerY centerZ` are treated as reference coordinates, not necessarily as the final placement coordinates.
+The values `centerX centerY centerZ` are treated as reference coordinates in the local coordinate system of the mother volume, and they are also used together with `targetX targetY targetZ` to define the focusing direction.
 
-For each entry, the code computes the intersection of the line from `center` to `target` with the plane `x = 0`, and the copy is placed at that projected position. This preserves the current implementation used in this repository.
+For each entry, the code uses the direction from `center` to `target` to orient the repeated volume so that it points toward the target point.
 
 ### Path handling
 
@@ -177,10 +179,6 @@ For each entry, the code computes the intersection of the line from `center` to 
 - a relative path
 
 Absolute paths are strongly recommended for reproducibility.
-
-### Orientation convention
-
-Each copy is rotated using the target point given on the same line of the input file. In the current implementation, the rotation routine uses the projected placement position together with the target point and aligns the local forward direction with the global `+x` reference used in the custom rotation routine.
 
 ## Recommended Minimal Workflow
 
@@ -203,30 +201,29 @@ This extension is intended for geometries where repeated detector or collimator 
 
 - be defined by hole-wise reference coordinates,
 - point to a shared or hole-specific target,
-- be projected onto the `x = 0` plane before placement,
 - represent cone-beam, fan-beam, converging-hole, or other focused collimator arrangements.
 
 ## Current Limitations
 
 - This implementation is a custom extension and is not part of the official GATE release.
-- The current code assumes the focused placement is obtained by projection onto the plane `x = 0`.
+- The first time `focusArray` is used, GATE must be recompiled so that the custom repeater is included in the build.
 - The rotation routine follows the existing custom implementation and therefore depends on the local axis convention of the repeated object.
 
 ## Summary of User-Facing Commands
 
-For a volume named `crystal`, the most useful commands are:
+For a volume named `hole`, the most useful commands are:
 
 ```text
-/gate/crystal/repeaters/insert focusArray
-/gate/crystal/focusArray/setPlacementsFilename /absolute/path/to/FocusArray_placements.txt
+/gate/hole/repeaters/insert focusArray
+/gate/hole/focusArray/setPlacementsFilename /absolute/path/to/FocusArray_placements.txt
 ```
 
 If a custom repeater name is used:
 
 ```text
-/gate/crystal/repeaters/name focusArrayRepeater
-/gate/crystal/repeaters/insert focusArray
-/gate/crystal/focusArrayRepeater/setPlacementsFilename /absolute/path/to/FocusArray_placements.txt
+/gate/hole/repeaters/name focusArrayRepeater
+/gate/hole/repeaters/insert focusArray
+/gate/hole/focusArrayRepeater/setPlacementsFilename /absolute/path/to/FocusArray_placements.txt
 ```
 
 ## Citation / Reuse
@@ -234,5 +231,4 @@ If a custom repeater name is used:
 If you use this custom extension in publications, please describe it as a user-added GATE repeater for focused array placement.
 
 ## Contact
-
 
