@@ -235,6 +235,4 @@ If you use this custom extension in publications, please describe it as a user-a
 
 ## Contact
 
-Contact information is temporarily withheld for anonymous sharing.
 
-It will be added in a future update when public release is appropriate.
