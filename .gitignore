@@ -5,7 +5,6 @@ build/
 *.out
 CMakeCache.txt
 CMakeFiles/
-
 build/
 build_check/
 build_github/
