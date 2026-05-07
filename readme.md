@@ -91,16 +91,16 @@ cmake --build /path/to/Gate-9.4.1/build -j16
 Minimal example:
 
 ```text
-/gate/crystal/repeaters/insert focusArray
-/gate/crystal/focusArray/setPlacementsFilename /absolute/path/to/FocusArray_placements.txt
+/gate/hole/repeaters/insert focusArray
+/gate/hole/focusArray/setPlacementsFilename /absolute/path/to/FocusArray_placements.txt
 ```
 
 If you prefer a custom repeater name:
 
 ```text
-/gate/crystal/repeaters/name focusArrayRepeater
-/gate/crystal/repeaters/insert focusArray
-/gate/crystal/focusArrayRepeater/setPlacementsFilename /absolute/path/to/FocusArray_placements.txt
+/gate/hole/repeaters/name focusArrayRepeater
+/gate/hole/repeaters/insert focusArray
+/gate/hole/focusArrayRepeater/setPlacementsFilename /absolute/path/to/FocusArray_placements.txt
 ```
 
 ## Placement File Format
