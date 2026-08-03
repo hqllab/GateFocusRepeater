@@ -1,0 +1,150 @@
+# SPECT acquisition
+/control/alias RADIUS 22.0
+/control/alias ANGLE 0
+/control/alias PROJTIME 0.0001
+/control/alias ACTIVITY 0.0001
+/control/alias STARTTIME 0
+/control/alias SPEED 1.80000000000000000000
+/control/add TRANSLATION {RADIUS} 8.0
+/control/add ENDTIME {STARTTIME} {PROJTIME}
+/control/multiply PROJTIME_step {PROJTIME} 1
+
+# M A N D A T O R Y
+#####
+/gate/geometry/setMaterialDatabase GateMaterials.db
+
+# G E O M E T R Y
+#####
+
+# World
+# Define the world dimensions
+##
+/gate/world/geometry/setXLength 300 cm
+/gate/world/geometry/setYLength 300 cm
+/gate/world/geometry/setZLength 300 cm
+
+# Scanner Head
+# Create a new box representing the main head-volume
+# SPECThead is the name of the predefined SPECT system
+# Create the SPECT system, which will yield an Interfile output of projection data
+##
+
+/gate/world/daughters/name SPECThead
+/gate/world/daughters/insert box
+/gate/SPECThead/geometry/setXLength  20. cm
+/gate/SPECThead/geometry/setYLength 100. cm
+/gate/SPECThead/geometry/setZLength 100. cm
+/gate/SPECThead/placement/setTranslation  {TRANSLATION} 0. 0. cm
+/gate/SPECThead/setMaterial Air
+#/gate/SPECThead/repeaters/insert ring
+#/gate/SPECThead/ring/setRepeatNumber 2
+#/gate/SPECThead/moves/insert orbiting
+#/gate/SPECThead/orbiting/setSpeed 0.15 deg/s
+#/gate/SPECThead/orbiting/setPoint1 0 0 0 cm
+#/gate/SPECThead/orbiting/setPoint2 0 0 1 cm
+/gate/SPECThead/vis/forceWireframe
+
+/gate/SPECThead/daughters/name collimator
+/gate/SPECThead/daughters/insert box
+/gate/collimator/geometry/setXLength 4. cm
+/gate/collimator/geometry/setYLength 50. cm
+/gate/collimator/geometry/setZLength 50. cm
+/gate/collimator/placement/setTranslation  -8.0 0. 0. cm
+/gate/collimator/setMaterial Tungsten
+/gate/collimator/vis/setColor red
+/gate/collimator/vis/forceSolid
+
+
+# Insert the first hole of air in the collimator
+##
+/gate/collimator/daughters/name hole
+/gate/collimator/daughters/insert cone
+/gate/hole/geometry/setRmin1	0. cm
+/gate/hole/geometry/setRmin2	0. cm
+/gate/hole/geometry/setRmax1	0.08 cm
+/gate/hole/geometry/setRmax2	0.085 cm
+/gate/hole/geometry/setHeight	5.2 cm
+/gate/hole/placement/setTranslation  0. 0. 0. cm
+/gate/hole/placement/setRotationAxis	0 1 0
+/gate/hole/placement/setRotationAngle	90 deg
+/gate/hole/setMaterial Air
+/gate/hole/vis/forceSolid
+
+#
+/gate/hole/repeaters/insert focusArray
+/gate/hole/focusArray/setPlacementsFilename ArrayRepeater_placements.txt
+
+# CRYSTAL
+# Create the crystal volume
+/gate/SPECThead/daughters/name crystal
+/gate/SPECThead/daughters/insert box
+/gate/crystal/geometry/setXLength  0.95 cm
+/gate/crystal/geometry/setYLength  52. cm
+/gate/crystal/geometry/setZLength  52. cm
+/gate/crystal/placement/setTranslation  -5 0. 0. cm
+/gate/crystal/setMaterial NaI
+/gate/crystal/vis/setColor yellow
+
+# PHANTOM
+# Create the phantom volume
+/gate/world/daughters/name Phantom
+/gate/world/daughters/insert cylinder
+/gate/Phantom/geometry/setRmax 5.  cm
+/gate/Phantom/geometry/setRmin 0. cm
+/gate/Phantom/geometry/setHeight 5. cm
+/gate/Phantom/placement/setTranslation 0. 0. 0. cm
+/gate/Phantom/setMaterial Air
+/gate/Phantom/vis/setColor blue
+/gate/Phantom/vis/forceWireframe
+/gate/Phantom/moves/insert orbiting
+/gate/Phantom/orbiting/setSpeed {SPEED} deg/s
+/gate/Phantom/orbiting/setPoint1  0 0 1 cm
+/gate/Phantom/orbiting/setPoint1  0 0 0 cm
+
+/gate/systems/SPECThead/crystal/attach crystal
+/gate/systems/SPECThead/describe
+/gate/crystal/attachCrystalSD
+
+/gate/Phantom/attachPhantomSD
+/gate/SPECThead/attachPhantomSD
+/gate/collimator/attachPhantomSD
+
+
+#  P H Y S I C S
+#####
+/gate/physics/addProcess PhotoElectric
+/gate/physics/processes/PhotoElectric/setModel StandardModel
+
+/gate/physics/addProcess Compton
+/gate/physics/processes/Compton/setModel PenelopeModel
+
+/gate/physics/addProcess RayleighScattering
+/gate/physics/processes/RayleighScattering/setModel PenelopeModel
+
+/gate/physics/addProcess ElectronIonisation
+/gate/physics/processes/ElectronIonisation/setModel StandardModel e-
+
+/gate/physics/addProcess Bremsstrahlung
+/gate/physics/processes/Bremsstrahlung/setModel StandardModel e-
+
+/gate/physics/addProcess MultipleScattering e-
+
+/gate/physics/processList Enabled
+/gate/physics/processList Initialized
+
+#  C U T S
+#####
+# Cuts for particle in WORLD
+##
+/gate/physics/Gamma/SetCutInRegion      SPECThead 0.1 cm
+/gate/physics/Electron/SetCutInRegion   SPECThead 0.1 cm
+
+
+# I N I T I A L I Z A T I O N
+/gate/run/initialize
+
+# V I S U A L I S A T I O N
+#/vis/disable
+/control/execute vis.mac
+
+/control/execute secondPart.mac

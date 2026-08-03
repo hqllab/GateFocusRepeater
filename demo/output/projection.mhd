@@ -1,0 +1,14 @@
+ObjectType = Image
+NDims = 3
+BinaryData = True
+BinaryDataByteOrderMSB = False
+CompressedData = False
+TransformMatrix = 1 0 0 0 1 0 0 0 1
+Offset = 1.0933 1.0933 0.5
+CenterOfRotation = 0 0 0
+ElementSpacing = 2.1866 2.1866 1
+DimSize = 256 256 1
+AnatomicalOrientation = ???
+ElementType = MET_USHORT
+ElementDataFile = projection.sin
+# Slice 0 = Run: 0     Head: 0     EnWin: 0 (Singles_crystal)

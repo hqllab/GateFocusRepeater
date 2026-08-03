@@ -1,0 +1,69 @@
+# D E F I N E  T H E  S O U R C E
+/control/execute ./Defrise.mac
+
+# D I G I T I Z E R
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert adder
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert energyResolution
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/fwhm 0.10
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyResolution/energyOfReference 140. keV
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert spatialResolution
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/spatialResolution/fwhm 3.0 mm
+
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/spatialResolution/confineInsideOfSmallestElement true
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/spatialResolution/verbose 0
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/insert energyFraming
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyFraming/setMin 126. keV
+/gate/digitizerMgr/crystal/SinglesDigitizer/Singles/energyFraming/setMax 154. keV
+
+
+# O U T P U T
+#####
+
+/gate/output/root/enable
+/gate/output/root/setFileName output/benchSPECT
+/gate/output/root/setRootSinglesFlag 1
+/gate/output/root/setRootSingles_crystal_adderFlag 1
+#/gate/output/root/setRootSingles_crystal_energyResolutionFlag 1 
+#/gate/output/root/setRootSingles_crystal_spatialResolutionFlag 1
+#/gate/output/root/setRootSingles_crystal_energyFramingFlag 1
+
+/gate/output/analysis/recordSeptalPenetration true
+/gate/output/analysis/setSeptalVolumeName collimator
+
+#   R A N D O M
+# JamesRandom Ranlux64 MersenneTwister
+#/gate/random/setEngineName Ranlux64
+#/gate/random/setEngineSeed default
+#/gate/random/setEngineSeed auto
+/gate/random/setEngineSeed 123456789
+/gate/random/verbose 1
+
+
+# P R O J E C T I O N
+#####
+/gate/output/projection/enable
+/gate/output/projection/setFileName output/projection
+/gate/output/projection/pixelSizeX 2.1866 mm
+/gate/output/projection/pixelSizeY 2.1866 mm
+/gate/output/projection/pixelNumberX 256
+/gate/output/projection/pixelNumberY 256
+
+# Specify the projection plane (XY, YZ or ZX)
+/gate/output/projection/projectionPlane YZ
+
+
+# E X P E R I M E N T 
+#/gate/application/setTimeSlice      37.5  s
+#/gate/application/setTimeStart      0.    s
+#/gate/application/setTimeStop      600.  s
+
+/gate/application/setTimeStart      {STARTTIME}.    s
+/gate/application/setTimeSlice      {PROJTIME_step}  s
+/gate/application/setTimeStop      {ENDTIME}  s
+
+
+# V E R B O S I T Y
+/control/execute Verbose.mac
+
+# L E T' S   R U N   T H E   S I M U L A T I O N  !
+/gate/application/startDAQ

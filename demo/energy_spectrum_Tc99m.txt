@@ -1,0 +1,9 @@
+
+# Gamma spectrum for Technecium 99m
+# (first line is 1 0 to say it is a discrete spectrum)
+# Second line : 140.5 KeV
+1 0
+0.1405 0.891
+0.01837 0.04
+0.01825 0.021
+

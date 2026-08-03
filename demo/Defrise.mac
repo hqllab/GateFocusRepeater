@@ -1,0 +1,93 @@
+#=======================================================================
+# Auto-generated GATE source macro
+#=======================================================================
+
+/gate/source/addSource               rod_1
+/gate/source/rod_1/gps/centre     0.000000 0.000000 96.000000 mm
+/gate/source/rod_1/gps/type       Volume
+/gate/source/rod_1/gps/shape      Cylinder
+/gate/source/rod_1/gps/radius     60.0 mm
+/gate/source/rod_1/gps/halfz      4 mm
+/gate/source/rod_1/setActivity    0.001 MBq
+/gate/source/rod_1/gps/particle gamma
+/gate/source/rod_1/gps/energy 140. keV
+/gate/source/rod_1/gps/angtype iso
+/gate/source/rod_1/attachTo Phantom
+
+#=======================================================================
+/gate/source/addSource               rod_2
+/gate/source/rod_2/gps/centre     0.00 0.000000 64.000000 mm
+/gate/source/rod_2/gps/type       Volume
+/gate/source/rod_2/gps/shape      Cylinder
+/gate/source/rod_2/gps/radius     60 mm
+/gate/source/rod_2/gps/halfz      4 mm
+/gate/source/rod_2/setActivity    0.001 MBq
+/gate/source/rod_2/gps/particle gamma
+/gate/source/rod_2/gps/energy 140. keV
+/gate/source/rod_2/gps/angtype iso
+/gate/source/rod_2/attachTo Phantom
+
+#=======================================================================
+/gate/source/addSource               rod_3
+/gate/source/rod_3/gps/centre     0.0 0.0 32.000000 mm
+/gate/source/rod_3/gps/type       Volume
+/gate/source/rod_3/gps/shape      Cylinder
+/gate/source/rod_3/gps/radius     60 mm
+/gate/source/rod_3/gps/halfz      4 mm
+/gate/source/rod_3/setActivity    0.001 MBq
+/gate/source/rod_3/gps/particle gamma
+/gate/source/rod_3/gps/energy 140. keV
+/gate/source/rod_3/gps/angtype iso
+/gate/source/rod_3/attachTo Phantom
+
+#=======================================================================
+/gate/source/addSource               rod_4
+/gate/source/rod_4/gps/centre     0.0 0.0 0.0 mm
+/gate/source/rod_4/gps/type       Volume
+/gate/source/rod_4/gps/shape      Cylinder
+/gate/source/rod_4/gps/radius     60 mm
+/gate/source/rod_4/gps/halfz      4 mm
+/gate/source/rod_4/setActivity    0.001 MBq
+/gate/source/rod_4/gps/particle gamma
+/gate/source/rod_4/gps/energy 140. keV
+/gate/source/rod_4/gps/angtype iso
+/gate/source/rod_4/attachTo Phantom
+
+#=======================================================================
+/gate/source/addSource               rod_5
+/gate/source/rod_5/gps/centre     0.0 0.000000 -32.000000 mm
+/gate/source/rod_5/gps/type       Volume
+/gate/source/rod_5/gps/shape      Cylinder
+/gate/source/rod_5/gps/radius     60 mm
+/gate/source/rod_5/gps/halfz      4 mm
+/gate/source/rod_5/setActivity    0.001 MBq
+/gate/source/rod_5/gps/particle gamma
+/gate/source/rod_5/gps/energy 140. keV
+/gate/source/rod_5/gps/angtype iso
+/gate/source/rod_5/attachTo Phantom
+
+#=======================================================================
+/gate/source/addSource               rod_6
+/gate/source/rod_6/gps/centre     0.0 0.0 -64.000000 mm
+/gate/source/rod_6/gps/type       Volume
+/gate/source/rod_6/gps/shape      Cylinder
+/gate/source/rod_6/gps/radius     60 mm
+/gate/source/rod_6/gps/halfz      4 mm
+/gate/source/rod_6/setActivity    0.001 MBq
+/gate/source/rod_6/gps/particle gamma
+/gate/source/rod_6/gps/energy 140. keV
+/gate/source/rod_6/gps/angtype iso
+/gate/source/rod_6/attachTo Phantom
+
+#=======================================================================
+/gate/source/addSource               rod_7
+/gate/source/rod_7/gps/centre     0.0 0.0 -96.0 mm
+/gate/source/rod_7/gps/type       Volume
+/gate/source/rod_7/gps/shape      Cylinder
+/gate/source/rod_7/gps/radius     60 mm
+/gate/source/rod_7/gps/halfz      4 mm
+/gate/source/rod_7/setActivity    0.001 MBq
+/gate/source/rod_7/gps/particle gamma
+/gate/source/rod_7/gps/energy 140. keV
+/gate/source/rod_7/gps/angtype iso
+/gate/source/rod_7/attachTo Phantom
