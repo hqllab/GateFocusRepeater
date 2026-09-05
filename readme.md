@@ -228,8 +228,10 @@ If a custom repeater name is used:
 
 ## Citation / Reuse
 
-If you use this custom extension in publications, please describe it as a user-added GATE repeater for focused array placement.
+If you use this custom extension, please cite the following publication:
+
+Weng F, Chen G, Zan Y, Mok G S P, Seo Y and Huang Q. 2026. An automated geometric modeling framework in GATE for the design and optimization of high-sensitivity converging-beam SPECT collimators. Physics in Medicine & Biology 71(17), 175002. https://doi.org/10.1088/1361-6560/ae97b0
 
 ## Contact
 
-
+If you have any questions, please contact: gardenia09@163.com
